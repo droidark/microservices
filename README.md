@@ -41,6 +41,9 @@ Spring Cloud is not a simple project, Spring Cloud is a range of projects to dev
 
 ### Create server for Spring Cloud Config Server
 We need to create a project with **Spring Cloud Config Server** dependency.
+
+![spring-cloud-config-server-setup](https://raw.githubusercontent.com/droidark/microservices/master/diagrams/spring-cloud-config-server.png)
+
 ### Connect Spring Cloud Config Server with GIT
 1. Add the Git folder as a link source inside the project.
 1. Edit application properties file with the Git repo URL.
