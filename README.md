@@ -56,8 +56,10 @@ We need to create a project with **Spring Cloud Config Server** dependency.
             uri: git-url
     ```
 1. `@EnableConfigServer` annotation in project main class.
-1. Go to
+### Verify configuration
+To verify the correct behavior follow the next path:
     > http://spring-clud-config-server-host/{properties-file-name-in-git-repository}/default
+
 ### Create properties for many environments
 1. Create a copy based on main application properties files followed by -dev or -qa (example: demo-dev.yml or demo-qa.yml)
 1. Go to 
@@ -103,6 +105,14 @@ We need to create a project with **Spring Cloud Config Client** dependency.
         uri: http://spring-clud-config-server-host
     ```
 > **NOTE:** The application properties files inside the git repository must be the same name that **Spring Cloud Config Server Client application name:** eg: **limits-service**.yml, **limits-service-dev**.yml, **limits-service-qa**.yml.
+
+> **Spring Cloud 2020.0 Release Notes** Bootstrap, provided by spring-cloud-commons, is no longer enabled by default. If your project requires it, it can be re-enabled by the following new starter. To solve that it's necessary add the following dependency in pom.xml file
+```xml
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-bootstrap</artifactId>
+    </dependency>
+```
 ### Configuring profiles in Spring Cloud Config Server Client
 1. In *bootstrap.yml* add the next lines (Profiles are used to get the configuration for a specific environment).
     ```yml
