@@ -39,8 +39,32 @@ Spring Cloud is not a simple project, Spring Cloud is a range of projects to dev
 
 ![spring-cloud-config-server](https://raw.githubusercontent.com/droidark/microservices/master/diagrams/spring-cloud-config-server.svg)
 
+### Create server for Spring Cloud Config Server
+We need to create a project with **Spring Cloud Config Server** dependency.
+### Connect Spring Cloud Config Server with GIT
+1. Add the Git folder as a link source inside the project.
+1. Edit application properties file with the Git repo URL.
+    ```yml
+    spring:
+    cloud:
+        config:
+        server:
+            git:
+            uri: git-url
+    ```
+1. `@EnableConfigServer` annotation in project main class.
+1. Go to
+    > http://spring-clud-config-server-host/{properties-file-name-in-git-repository}/default
+### Create properties for many environments
+1. Create a copy based on main application properties files followed by -dev or -qa (example: demo-dev.yml or demo-qa.yml)
+1. Go to 
+    > http://spring-clud-config-server-host/{properties-file-name-in-git-repository}/(default|dev|qa)
+
 ### Create client for Spring Cloud Config Server
 We need to create a project with **Spring Cloud Config Client** dependency.
+
+![spring-cloud-config-client-setup](https://raw.githubusercontent.com/droidark/microservices/master/diagrams/spring-cloud-config-client.png)
+
 ### Read properties from properties file
 1. Create a POJO
     ```java
@@ -63,26 +87,7 @@ We need to create a project with **Spring Cloud Config Client** dependency.
     ```
     1. **OPTION 1:** Add `@Configuration` annotation before @ConfigurationProperties.
     1. **OPTION 2 (RECOMMENDED):** Add `@EnableConfigurationProperties(AppConfiguration.class)` in the main class.
-### Create server for Spring Cloud Config Server
-We need to create a project with **Spring Cloud Config Server** dependency.
-### Connect Spring Cloud Config Server with GIT
-1. Add the Git folder as a link source inside the project.
-1. Edit application properties file with the Git repo URL.
-    ```yml
-    spring:
-    cloud:
-        config:
-        server:
-            git:
-            uri: git-url
-    ```
-1. `@EnableConfigServer` annotation in project main class.
-1. Go to
-    > http://spring-clud-config-server-host/{properties-file-name-in-git-repository}/default
-### Create properties for many environments
-1. Create a copy based on main application properties files followed by -dev or -qa (example: demo-dev.yml or demo-qa.yml)
-1. Go to 
-    > http://spring-clud-config-server-host/{properties-file-name-in-git-repository}/(default|dev|qa)
+
 ### Connect Spring Cloud Config Server Client with Spring Cloud Config Server
 1. In **Spring Cloud Config Server Client**, rename *application.yml* to *bootstrap.yml*
 1. Add **Spring Cloud Config Server** URL to *bootstrap.yml*
