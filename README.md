@@ -202,6 +202,7 @@ Ribbon will help us to distribute calls between different instances of the Curre
 ![ribbon](https://raw.githubusercontent.com/droidark/microservices/master/diagrams/ribbon.svg)
 
 #### Steps to configure Ribbon
+On Currency Conversion Service
 ##### Add Maven dependency
 ```xml
 <dependency>
