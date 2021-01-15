@@ -183,3 +183,44 @@ public interface CurrencyExchangeServiceProxy {
     CurrencyConversion retrieveExchangeValue(@PathVariable("from") String from, @PathVariable("to") String to);
 }
 ```
+##### Using Feing Proxy in Controller
+```java
+@GetMapping(path = "/currency-converter-feing/from/{from}/to/{to}/quantity/{quantity}")
+public CurrencyConversion convertCurrencyFeing(@PathVariable String to,
+        @PathVariable String from,
+        @PathVariable BigDecimal quantity) {
+    Map<String, String> uriVariables = Map.of("from", from, "to", to);
+    CurrencyConversion response = currencyExchangeServiceProxy.retrieveExchangeValue(from, to);
+    return new CurrencyConversion(response.getId(), from, to, response.getConversionMultiple(), quantity,
+            quantity.multiply(response.getConversionMultiple()), response.getPort());
+}
+```
+## LOAD BALANCING
+### Ribbon
+Ribbon will help us to distribute calls between different instances of the Currency Exchange Service.
+
+![ribbon](https://raw.githubusercontent.com/droidark/microservices/master/diagrams/ribbon.svg)
+
+#### Steps to configure Ribbon
+##### Add Maven dependency
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+</dependency>
+```
+##### Configure Proxy (created with Feing)
+```java
+@FeignClient(name = "{service-name}")
+@RibbonClient(name = "{service-name}")
+public interface CurrencyExchangeServiceProxy {
+    @GetMapping("/currency-exchange/from/{from}/to/{to}")
+    CurrencyConversion retrieveExchangeValue(@PathVariable("from") String from, @PathVariable("to") String to);
+}
+````
+##### Configure application.yml
+```yml
+service-name:
+  ribbon:
+    listOfServers: host:port,host:port...
+```
