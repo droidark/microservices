@@ -5,6 +5,8 @@ Each project have their own characteristics and scopes, so it's important mark o
 | ----------- | ------------ | ----- |
 | spring-cloud-config-server | Spring Cloud Config Server | 8888 |
 | limits-service | Spring Cloud Config Client | 8080 |
+| currency-exchange-service | Consumes from database | 8000, 8001, 8002... |
+| currency-conversion-service | Consumes from Exchange service | 8100, 8101, 8102... |
 ## WHAT ARE MICROSERVICES?
 Microservices are an architectural approach to building applications. As an architectural framework, microservices are distributed and loosely coupled, so one team’s changes won’t break the entire app. The benefit to using microservices is that development teams are able to rapidly build new components of apps to meet changing business needs.
 ### Microservices vs monolithic applications
@@ -125,3 +127,59 @@ We need to create a project with **Spring Cloud Config Client** dependency.
     profiles:
         active: qa | dev | etc
     ```
+## CONSUMING REST SERVICE
+### WebClient instead of RestTemplate
+Simply put, WebClient is an interface representing the main entry point for performing web requests.
+
+It has been created as a part of the Spring Web Reactive module and will be replacing the classic RestTemplate in these scenarios. The new client is a reactive, non-blocking solution that works over the HTTP/1.1 protocol.
+
+Finally, the interface has a single implementation – the Default WebClient class – which we'll be working with.
+
+> **More information:** https://springframework.guru/spring-5-webclient/ and https://www.baeldung.com/spring-5-webclient
+
+### WebClient Example
+
+```java
+@GetMapping(path = "/currency-converter/from/{from}/to/{to}/quantity/{quantity}")
+public Mono<CurrencyConversion> convertCurrency(@PathVariable String to,
+        @PathVariable String from,
+        @PathVariable BigDecimal quantity) {
+    Map<String, String> uriVariables = Map.of("from", from, "to", to);
+    WebClient client = WebClient
+            .builder()
+            .baseUrl("http://localhost:8000/currency-exchange/from/{from}/to/{to}")
+            .defaultUriVariables(uriVariables)
+            .build();
+    return client.get().retrieve().bodyToMono(CurrencyConversion.class);
+}
+```
+### FEING
+Feing makes it very easy to invoke other microservices, other RESTful services. The other additional thing is, it provides integration with something called **Ribbon** which is a client-side balancing framework.
+
+#### Use Feing
+##### Import dependency
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-openfeign</artifactId>
+</dependency>
+```
+##### Configure in Application Environment
+```java
+@SpringBootApplication
+@EnableFeignClients("{default-application-package-is-OPTIONAL}")
+public class CurrencyConversionServiceApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(CurrencyConversionServiceApplication.class, args);
+    }
+
+}
+```
+##### Create a feing proxy (in service layer)
+```java
+@FeignClient(name = "currency-exchange-service", url = "localhost:8000")
+public interface CurrencyExchangeServiceProxy {
+    @GetMapping("/currency-exchange/from/{from}/to/{to}")
+    CurrencyConversion retrieveExchangeValue(@PathVariable("from") String from, @PathVariable("to") String to);
+}
+```
