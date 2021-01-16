@@ -7,6 +7,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import xyz.krakenkat.limitsservice.configuration.AppConfiguration;
 
 @SpringBootApplication
+@EnableDiscoveryClient
 @EnableConfigurationProperties(AppConfiguration.class)
 public class LimitsServiceApplication {
 

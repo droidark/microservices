@@ -195,6 +195,11 @@ public CurrencyConversion convertCurrencyFeing(@PathVariable String to,
             quantity.multiply(response.getConversionMultiple()), response.getPort());
 }
 ```
+
+## NAMING SERVER
+All the instances of all microservices would register with the naming server. Whenever an instance of a microservice comes up it would register itself with the **EUREKA NAMING SERVER** (called service registration). Also that is naming **SERVICE DISCOVERY**.
+
+
 ## LOAD BALANCING
 ### Ribbon
 Ribbon will help us to distribute calls between different instances of the Currency Exchange Service.
