@@ -201,33 +201,74 @@ All the instances of all microservices would register with the naming server. Wh
 
 ![ribbon](https://raw.githubusercontent.com/droidark/microservices/master/diagrams/naming-server.svg)
 
+### Setting up Eureka Server
+![eureka-server](https://raw.githubusercontent.com/droidark/microservices/master/diagrams/eureka-server.png)
 
-## LOAD BALANCING
-### Ribbon
-Ribbon will help us to distribute calls between different instances of the Currency Exchange Service.
+### Configure Eureka Server Application
+Add `@EnableEurekaServer` annotation in main application class
+```java
+@SpringBootApplication
+@EnableEurekaServer
+public class NetflixEurekaNamingServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(NetflixEurekaNamingServerApplication.class, args);
+    }
+}
+```
+Edit `application.yml`
+```yml
+spring:
+  application:
+    name: netflix-eureka-naming-server
+server:
+  port: 8761 #DEFAULT PORT FOR EUREKA SERVER
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+```
+### Eureka Client, connecting services to Eureka Server
 
-![ribbon](https://raw.githubusercontent.com/droidark/microservices/master/diagrams/ribbon.svg)
-#### Steps to configure Ribbon
-On Currency Conversion Service
-##### Add Maven dependency
+Add Eureka Client dependency
 ```xml
 <dependency>
     <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 </dependency>
 ```
-##### Configure Proxy (created with Feing)
+
+Add `@EnableDiscoveryClient` to the main application class
 ```java
-@FeignClient(name = "{service-name}")
-@RibbonClient(name = "{service-name}")
-public interface CurrencyExchangeServiceProxy {
-    @GetMapping("/currency-exchange/from/{from}/to/{to}")
-    CurrencyConversion retrieveExchangeValue(@PathVariable("from") String from, @PathVariable("to") String to);
+@SpringBootApplication
+@EnableFeignClients
+@EnableDiscoveryClient
+public class CurrencyConversionServiceApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(CurrencyConversionServiceApplication.class, args);
+    }
 }
-````
-##### Configure application.yml
-```yml
-service-name:
-  ribbon:
-    listOfServers: host:port,host:port...
 ```
+
+Edit `application.yml` file
+```yml
+eureka:
+  client:
+    service-url:
+      default-zone: http://[eureka-server-host]:[eureka-server-port]
+```
+
+## LOAD BALANCING
+
+### Spring Cloud LoadBalancer
+Spring Cloud Load Balancer provides a simple round-robin rule for load balancing between multiple instances of a single service, the most common is to implement the Load Balancer on the client-side.
+
+#### Setting up Spring Cloud LoadBalancer
+Add the following depency in client `pom.xml`
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+</dependency>
+```
+
+> **_NOTE:_** Simple demo
