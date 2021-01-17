@@ -199,6 +199,8 @@ public CurrencyConversion convertCurrencyFeing(@PathVariable String to,
 ## NAMING SERVER
 All the instances of all microservices would register with the naming server. Whenever an instance of a microservice comes up it would register itself with the **EUREKA NAMING SERVER** (called service registration). Also that is naming **SERVICE DISCOVERY**.
 
+![ribbon](https://raw.githubusercontent.com/droidark/microservices/master/diagrams/naming-server.svg)
+
 
 ## LOAD BALANCING
 ### Ribbon
