@@ -7,7 +7,7 @@ import xyz.krakenkat.currencyconversionservice.domain.model.CurrencyConversion;
 
 // NAME: THE SERVICE NAME TO CONSUME [DEFINED IN APPLICATION.YML FILE]
 // URL: SERVICE URL TO CONSUME
-// @FeignClient(name = "currency-exchange-service", url = "localhost:8000") // SPRING CLOUD LOADBALANCER
+// @FeignClient(name = "currency-exchange-service", url = "localhost:8000") // WITHOUT SPRING CLOUD LOADBALANCER
 @FeignClient(name = "currency-exchange-service")
 public interface CurrencyExchangeServiceProxy {
     @GetMapping("/currency-exchange/from/{from}/to/{to}") // GET REQUEST DIRECTLY

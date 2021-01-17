@@ -199,7 +199,7 @@ public CurrencyConversion convertCurrencyFeing(@PathVariable String to,
 ## NAMING SERVER
 All the instances of all microservices would register with the naming server. Whenever an instance of a microservice comes up it would register itself with the **EUREKA NAMING SERVER** (called service registration). Also that is naming **SERVICE DISCOVERY**.
 
-![ribbon](https://raw.githubusercontent.com/droidark/microservices/master/diagrams/naming-server.svg)
+![naming-server](https://raw.githubusercontent.com/droidark/microservices/master/diagrams/naming-server.svg)
 
 ### Setting up Eureka Server
 ![eureka-server](https://raw.githubusercontent.com/droidark/microservices/master/diagrams/eureka-server.png)
@@ -271,4 +271,24 @@ Add the following depency in client `pom.xml`
 </dependency>
 ```
 
-> **_NOTE:_** Simple demo
+> **NOTE:** Spring Cloud LoadBalancer is preconfigured to work  with Eureka Server, thus it's not necessary to write code to get the communication though the different instances
+
+### Relationship between Eureka, Ribbon and Feing
+
+![spring-cloud-loadbalancer](https://raw.githubusercontent.com/droidark/microservices/master/diagrams/spring-cloud-loadbalancer.svg)
+
+- **Naming server (Eureka):** Naming server is the one which offers registration and service discovery functionality.
+- **Spring Cloud LoadBalancer**: Spring Cloud LoadBalancer provides the client side load balancing to distribute the load between multiple services providers.
+- **Feing:** Feign is a declarative web service client. It makes writing web service clients easier.
+
+## Connect Spring Cloud LoadBalancer with Eureka Server
+Eureka clients are able to get different instances through the service-name automatically.
+
+Modify `@FeignClient` configuration on client interface.
+```java
+@FeignClient(name = "currency-exchange-service")
+public interface CurrencyExchangeServiceProxy {
+    @GetMapping("/currency-exchange/from/{from}/to/{to}")
+    CurrencyConversion retrieveExchangeValue(@PathVariable("from") String from, @PathVariable("to") String to);
+}
+```
